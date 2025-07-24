@@ -34,10 +34,13 @@ app = FastAPI(
 origins = [
     "http://localhost",
     f"http://127.0.0.1:{PORT}",
-    f"http:/0.0.0.0:{PORT}",
+    f"http://0.0.0.0:{PORT}",
     f"http://localhost:{PORT}",
+    "https://localhost",
+    f"https://127.0.0.1:{PORT}",
+    f"https://localhost:{PORT}",
     "null",  # Often used for local file-based origins
-    # Add your deployed frontend's URL here
+    # Add your deployed frontend's URL here - Replit will provide an HTTPS URL
 ]
 
 app.add_middleware(

@@ -203,25 +203,18 @@
     // --- API Functions ---
     async function callGeminiAPI(prompt) {
         adviceOutput.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
-        const port="5000";
-        const apiKey = ""; // API key is handled by the environment
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-        const payload = {
-            contents: [{ role: "user", parts: [{ text: prompt }] }]
-        };
+        
+        // Determine the base URL based on environment
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? `${window.location.protocol}//${window.location.hostname}:5000`
+            : `${window.location.protocol}//${window.location.hostname}`;
 
         try {
-            /*const response = await fetch(apiUrl, {
+            // Call your own server's API endpoint
+            const response = await fetch(`${baseUrl}/api/get-advice`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });*/
-            // Instead of the Google URL, you call your own server
-            const response = await fetch(`http://0.0.0.0:${port}/api/get-advice`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: prompt }) // Send the prompt to your server
+                body: JSON.stringify({ prompt: prompt })
             });
 
             if (!response.ok) {
