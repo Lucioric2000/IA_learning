@@ -18,6 +18,8 @@ from dotenv import load_dotenv
 
 # Load environment variables from the .env file
 load_dotenv()
+# Get the port from environment variables, defaulting to 8000
+PORT = os.getenv("PORT", "8000")
 
 # --- FastAPI App Initialization ---
 app = FastAPI(
@@ -31,8 +33,9 @@ app = FastAPI(
 # In a production environment, you should restrict the origins to your actual frontend's domain.
 origins = [
     "http://localhost",
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
+    f"http://127.0.0.1:{PORT}",
+    f"http:/0.0.0.0:{PORT}",
+    f"http://localhost:{PORT}",
     "null",  # Often used for local file-based origins
     # Add your deployed frontend's URL here
 ]
