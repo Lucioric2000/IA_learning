@@ -211,10 +211,16 @@
         };
 
         try {
-            const response = await fetch(apiUrl, {
+            /*const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
+            });*/
+            // Instead of the Google URL, you call your own server
+            const response = await fetch('http://localhost:8000/api/get-advice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt }) // Send the prompt to your server
             });
 
             if (!response.ok) {
@@ -279,7 +285,7 @@
                 If it's a flight request, provide a itinerary with airline, flight numbers, times, and price.
                 If it's a hotel request, suggest 2-3 hotels with star ratings, price per night, and a brief description.
                 If the query is vague, ask clarifying questions.
-                Format the entire response as clean HTML content. Do not include <html>, <head>, or <body> tags.
+                Format the entire response as HTML content with real links. Do not include <html>, <head>, or <body> tags.
             `;
         callGeminiAPI(prompt);
     });
