@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chat-bubble-user {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+            border-radius: 1.5rem 1.5rem 0.25rem 1.5rem;
+        }
+        .chat-bubble-bot {
+            background-color: #E5E7EB; /* gray-200 */
+            color: #1F2937; /* gray-800 */
+            border-radius: 1.5rem 1.5rem 1.5rem 0.25rem;
+        }
+        #advice-output h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #D1D5DB;
+            padding-bottom: 0.25rem;
+        }
+        #advice-output ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        #advice-output p {
+            margin-bottom: 1rem;
+        }
+        .loader {
+            width: 50px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 8px solid #0000;
+            border-right-color: #3B82F6;
+            position: relative;
+            animation: l24 1s infinite linear;
+        }
+        .loader:before,
+        .loader:after {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: inherit;
+            animation: inherit;
+            animation-duration: 2s;
+        }
+        .loader:after {
+            animation-duration: 4s;
+        }
+        @keyframes l24 {
+            100% {transform: rotate(1turn)}
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Header -->
+<header class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><path d="M21.5 12c0-5.25-4.25-9.5-9.5-9.5S2.5 6.75 2.5 12s4.25 9.5 9.5 9.5s9.5-4.25 9.5-9.5z"/><path d="M12 2.5v19"/><path d="M2.5 12h19"/></svg>
+            <h1 class="text-2xl font-bold text-gray-800">AI Travel Advisor</h1>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="container mx-auto p-4 md:p-6 lg:p-8">
+    <div class="grid lg:grid-cols-5 gap-8">
+
+        <!-- Left Column: Input Forms -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">Plan Your Perfect Trip</h2>
+
+            <!-- Travel Advice Form -->
+            <form id="travel-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="destination" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+                        <input type="text" id="destination" name="destination" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Paris, France" required>
+                    </div>
+                    <div>
+                        <label for="time-of-year" class="block text-sm font-medium text-gray-700 mb-1">Time of Year</label>
+                        <select id="time-of-year" name="time-of-year" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option>Any</option>
+                            <option>Spring (Mar-May)</option>
+                            <option>Summer (Jun-Aug)</option>
+                            <option>Autumn (Sep-Nov)</option>
+                            <option>Winter (Dec-Feb)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="transportation" class="block text-sm font-medium text-gray-700 mb-1">Primary Transportation</label>
+                        <select id="transportation" name="transportation" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option>Any</option>
+                            <option>Plane</option>
+                            <option>Car</option>
+                            <option>Train</option>
+                            <option>Bus</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age Group</label>
+                        <select id="age" name="age" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option>Any</option>
+                            <option>18-25</option>
+                            <option>26-40</option>
+                            <option>41-60</option>
+                            <option>60+</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="mt-6 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Get Travel Advice
+                </button>
+            </form>
+
+            <hr class="my-8 border-gray-200">
+
+            <!-- Booking Query Form -->
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-gray-900">Quick Booking</h3>
+                <p class="text-sm text-gray-600 mb-3">Ask our AI to find flights and hotels for you.</p>
+                <div class="space-y-3">
+                    <input type="text" id="booking-query-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Find a 5-star hotel in Rome for 3 nights">
+                    <button id="booking-query-btn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Process Booking Query
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Results Display -->
+        <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">Your AI-Generated Itinerary</h2>
+            <div id="advice-output" class="prose max-w-none h-[calc(100%-4rem)] overflow-y-auto pr-2">
+                <div class="flex flex-col items-center justify-center h-full text-center text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-gray-400"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+                    <h3 class="text-xl font-semibold">Your travel advice will appear here.</h3>
+                    <p>Fill out the form on the left to get started.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Chatbot -->
+<div id="chatbot-container" class="fixed bottom-5 right-5 z-50">
+    <button id="chat-toggle-btn" class="bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-110">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+    <div id="chatbot-modal" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-gray-200 flex flex-col transition-all duration-300">
+        <div id="chat-header" class="flex items-center justify-between p-4 bg-gray-100 rounded-t-xl border-b">
+            <h3 class="font-bold text-lg">Conference Booking</h3>
+            <button id="chat-close-btn" class="text-gray-500 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto h-80">
+            <!-- Chat messages will be appended here -->
+        </div>
+        <div id="chat-input-area" class="p-4 border-t bg-gray-50 rounded-b-xl">
+            <div class="flex space-x-2">
+                <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:ring-blue-500 focus:border-blue-500">
+                <button id="chat-send-btn" class="bg-blue-600 text-white rounded-full p-3 hover:bg-blue-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- DOM Elements ---
+    const travelForm = document.getElementById('travel-form');
+    const bookingQueryBtn = document.getElementById('booking-query-btn');
+    const adviceOutput = document.getElementById('advice-output');
+
+    const chatToggleBtn = document.getElementById('chat-toggle-btn');
+    const chatCloseBtn = document.getElementById('chat-close-btn');
+    const chatbotModal = document.getElementById('chatbot-modal');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('chat-send-btn');
+
+    // --- State ---
+    let chatbotState = 'GREETING';
+    let userDetails = {};
+
+    // --- API Functions ---
+    async function callGeminiAPI(prompt) {
+        adviceOutput.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
+        const apiKey = ""; // API key is handled by the environment
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const payload = {
+            contents: [{ role: "user", parts: [{ text: prompt }] }]
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                adviceOutput.innerHTML = text;
+            } else {
+                adviceOutput.innerHTML = '<p class="text-red-500">Sorry, I could not generate advice. The response was empty. Please try again.</p>';
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API:", error);
+            adviceOutput.innerHTML = `<p class="text-red-500">An error occurred while fetching travel advice. Please check the console for details and try again later.</p>`;
+        }
+    }
+
+    // --- Event Handlers ---
+    travelForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(travelForm);
+        const destination = formData.get('destination');
+        const timeOfYear = formData.get('time-of-year');
+        const transportation = formData.get('transportation');
+        const age = formData.get('age');
+
+        const prompt = `
+                You are an expert travel advisor. Generate a detailed travel plan formatted in clean HTML.
+                The user wants to go to: ${destination}.
+                Time of year: ${timeOfYear}.
+                Primary transportation: ${transportation}.
+                Age group: ${age}.
+
+                Please provide the following sections:
+                - A brief, engaging introduction to the destination.
+                - Top 5 Must-Do Activities with short descriptions.
+                - Recommended Packing List based on the season.
+                - Local Cuisine to Try with examples.
+                - Transportation tips for getting around the destination.
+                - Cultural Etiquette and safety notes.
+                - Example flight and hotel suggestions (mock data is fine).
+
+                Format the entire response as HTML content, using <h3> for section titles and <ul> for lists. Do not include <html>, <head>, or <body> tags.
+            `;
+        callGeminiAPI(prompt);
+    });
+
+    bookingQueryBtn.addEventListener('click', () => {
+        const query = document.getElementById('booking-query-input').value;
+        if (!query) {
+            alert('Please enter a booking query.');
+            return;
+        }
+        const travelFormData = new FormData(travelForm);
+
+        const prompt = `
+                You are an AI travel booking assistant for a trip to ${travelFormData.get('destination')}. A user has the following request: "${query}".
+                Analyze the request and provide a helpful response as if you are fulfilling it.
+                If it's a flight request, provide a itinerary with airline, flight numbers, times, and price.
+                If it's a hotel request, suggest 2-3 hotels with star ratings, price per night, and a brief description.
+                If the query is vague, ask clarifying questions.
+                Format the entire response as clean HTML content. Do not include <html>, <head>, or <body> tags.
+            `;
+        callGeminiAPI(prompt);
+    });
+
+    // --- Chatbot Logic ---
+    function toggleChatbot() {
+        chatbotModal.classList.toggle('hidden');
+        if (!chatbotModal.classList.contains('hidden') && chatMessages.children.length === 0) {
+            initiateChat();
+        }
+    }
+
+    chatToggleBtn.addEventListener('click', toggleChatbot);
+    chatCloseBtn.addEventListener('click', toggleChatbot);
+
+    function addChatMessage(message, sender) {
+        const bubble = document.createElement('div');
+        bubble.className = `w-fit max-w-[85%] p-3 mb-3 ${sender === 'user' ? 'chat-bubble-user self-end' : 'chat-bubble-bot self-start'}`;
+        bubble.textContent = message;
+        chatMessages.appendChild(bubble);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function initiateChat() {
+        chatbotState = 'GREETING';
+        userDetails = {};
+        chatMessages.innerHTML = '';
+        addChatMessage("Hello! I can help you book a conference with one of our travel representatives. What is your full name?", 'bot');
+        chatbotState = 'ASKED_NAME';
+    }
+
+    function handleChatbotLogic() {
+        const userInput = chatInput.value.trim();
+        if (!userInput) return;
+
+        addChatMessage(userInput, 'user');
+        chatInput.value = '';
+
+        setTimeout(() => {
+            switch (chatbotState) {
+                case 'ASKED_NAME':
+                    userDetails.name = userInput;
+                    addChatMessage(`Thank you, ${userDetails.name}. What is your email address?`, 'bot');
+                    chatbotState = 'ASKED_EMAIL';
+                    break;
+                case 'ASKED_EMAIL':
+                    if (!userInput.includes('@')) {
+                        addChatMessage("That doesn't look like a valid email. Please provide a correct email address.", 'bot');
+                        break;
+                    }
+                    userDetails.email = userInput;
+                    addChatMessage("Great. What date and time would be best for your conference call?", 'bot');
+                    chatbotState = 'ASKED_DATETIME';
+                    break;
+                case 'ASKED_DATETIME':
+                    userDetails.datetime = userInput;
+                    addChatMessage(`Perfect! I have scheduled a conference for you on ${userDetails.datetime}. A confirmation will be sent to ${userDetails.email}. Is there anything else I can help with?`, 'bot');
+                    chatbotState = 'CONFIRMED';
+                    break;
+                case 'CONFIRMED':
+                    if (userInput.toLowerCase().includes('yes')) {
+                        addChatMessage("How else can I assist you today?", 'bot');
+                        chatbotState = 'GENERAL_INQUIRY';
+                    } else {
+                        addChatMessage("Thank you for using our service. Have a great day!", 'bot');
+                        chatbotState = 'ENDED';
+                    }
+                    break;
+                default:
+                    addChatMessage("I can only assist with booking a conference. To start over, please close and reopen the chat.", 'bot');
+                    break;
+            }
+        }, 500);
+    }
+
+    chatSendBtn.addEventListener('click', handleChatbotLogic);
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            handleChatbotLogic();
+        }
+    });
+
+</script>
+</body>
+</html>
