@@ -41,6 +41,8 @@ origins = [
     f"https://localhost:{PORT}",
     "null",  # Often used for local file-based origins
     # Add your deployed frontend's URL here - Replit will provide an HTTPS URL
+    "https://traveladvisor.replit.app",
+    "https://traveladvisor-ai.replit.app"
 ]
 
 app.add_middleware(
