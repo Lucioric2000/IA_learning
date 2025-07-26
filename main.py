@@ -13,6 +13,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -68,6 +70,14 @@ GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemin
 # This defines the expected structure of the JSON data your frontend will send.
 class PromptRequest(BaseModel):
     prompt: str
+
+# Montar archivos estáticos
+app.mount("/dist", StaticFiles(directory="frontend/dist"), name="dist")
+app.mount("/static", StaticFiles(directory="frontend/public"), name="static")
+
+@app.get("/{full_path:path}")
+async def serve_react(full_path: str):
+    return FileResponse("frontend/public/index.html")
 
 # --- Web server endpoints ---
 @app.get("/")
