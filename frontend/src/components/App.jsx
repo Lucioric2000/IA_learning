@@ -4,6 +4,7 @@ import Header from './Header';
 import TravelForm from './TravelForm';
 import AdviceOutput from './AdviceOutput';
 import Chatbot from './Chatbot';
+import './App.css';
 
 const App = () => {
   const [advice, setAdvice] = useState('');
@@ -45,7 +46,9 @@ const App = () => {
 
       const result = await response.json();
       if (result.candidates && result.candidates.length > 0) {
-        setAdvice(result.candidates[0].content.parts[0].text);
+        const text = result.candidates[0].content.parts[0].text;
+        const textWithoutHtml = text.replace(/```[a-zA-Z]*\n|\n```/g, '');
+        setAdvice(textWithoutHtml);
       }
     } catch (error) {
       console.error('Error:', error);
