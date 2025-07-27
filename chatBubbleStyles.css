@@ -1,0 +1,26 @@
+/* styles/global.css */
+.chat-bubble-user {
+  background-color: #3B82F6;
+  color: white;
+  border-radius: 1.5rem 1.5rem 0.25rem 1.5rem;
+}
+
+.chat-bubble-bot {
+  background-color: #E5E7EB;
+  color: #1F2937;
+  border-radius: 1.5rem 1.5rem 1.5rem 0.25rem;
+}
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid #0000;
+  border-right-color: #3B82F6;
+  position: relative;
+  animation: l24 1s infinite linear;
+}
+
+@keyframes l24 {
+  100% {transform: rotate(1turn)}
+}
