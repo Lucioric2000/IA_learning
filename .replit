@@ -8,6 +8,15 @@ packages = ["bash", "libxcrypt"]
 [workflows]
 runButton = "Web App"
 
+[[workflows.workflow]]
+name = "React Build"
+author = 32081135
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd frontend && npm run build"
+
 #[[workflows.workflow]]
 #name = "Web App"
 #author = 32081135
