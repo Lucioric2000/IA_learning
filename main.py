@@ -35,6 +35,7 @@ app = FastAPI(
 # In a production environment, you should restrict the origins to your actual frontend's domain.
 origins = [
     "http://localhost",
+    "http://localhost:3000",
     f"http://127.0.0.1:{PORT}",
     f"http://0.0.0.0:{PORT}",
     f"http://localhost:{PORT}",
@@ -43,7 +44,6 @@ origins = [
     f"https://localhost:{PORT}",
     "null",  # Often used for local file-based origins
     # Add your deployed frontend's URL here - Replit will provide an HTTPS URL
-    "https://traveladvisor.replit.app",
     "https://traveladvisor-ai.replit.app"
 ]
 
@@ -72,12 +72,12 @@ class PromptRequest(BaseModel):
     prompt: str
 
 # Montar archivos estáticos
-app.mount("/dist", StaticFiles(directory="frontend/dist"), name="dist")
-app.mount("/static", StaticFiles(directory="frontend/public"), name="static")
+#app.mount("/dist", StaticFiles(directory="frontend/dist"), name="dist")
+#app.mount("/static", StaticFiles(directory="frontend/public"), name="static")
 
-@app.get("/{full_path:path}")
-async def serve_react(full_path: str):
-    return FileResponse("frontend/public/index.html")
+#@app.get("/{full_path:path}")
+#async def serve_react(full_path: str):
+#    return FileResponse("frontend/public/index.html")
 
 # --- Web server endpoints ---
 @app.get("/")
